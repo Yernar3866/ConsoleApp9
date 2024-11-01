@@ -1,5 +1,6 @@
 
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.Design;
 
 public interface IReport
@@ -87,6 +88,11 @@ public interface IIternalDeliveryService
 }
 public class InternalDeliveryService : IInheritanceService
 {
+    public void AddInheritedComponents(IComponent component, IContainer container)
+    {
+        throw new NotImplementedException();
+    }
+
     public void DeliverOrder(string orderId)
     {
         Console.WriteLine($"Delivering order {orderId} via internal service.");
@@ -97,5 +103,75 @@ public class InternalDeliveryService : IInheritanceService
         return $"Order {orderId} status: Delivered (internal)";
 
     }
+
+    public InheritanceAttribute GetInheritanceAttribute(IComponent component)
+    {
+        throw new NotImplementedException();
+    }
 }
+public class ExternalLogisticsServiceA
+{
+    public void ShipItem(String itemId) => Console.WriteLine($"Shipping item{itemId} via service A");
+    public string Trackshipment(int shipmentID) => $"Shipment {shipmentID} status: In transit (Serveice A)";
+
+    internal void ShipItem(object itemId)
+    {
+        throw new NotImplementedException();
+    }
+}
+public class ExternalLogisticsServiceB
+{
+    public void sendPackage(string packageInfo) => Console.WriteLine($"Sending package {packageInfo} via Service B");
+    public string CheckPackagestatus(string trackingCode) => $"Package{trackingCode} status: Delivered (Service B)";
+
+}
+public class LogisticsAdapterA : IInheritanceService
+{
+    private readonly ExternalLogisticsServiceA _externalServiceA = new ExternalLogisticsServiceA();
+    private string itemId;
+
+    public void AddInheritedComponents(IComponent component, IContainer container)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void DeliverOrder(string orderId)
+    {
+        if (int.TryParse(orderId, out int ItemId))
+            _externalServiceA.ShipItem(itemId);
+        else
+            Console.WriteLine("Invalid order ID format.");
+    }
+    public string GetDeliveryStatus(string orderId)
+    {
+        if(int.TryParse(orderId,out int shipmentId))
+            return _externalServiceA.Trackshipment(shipmentId);
+
+        return "Invalid order ID Format.";
+    }
+
+    public InheritanceAttribute GetInheritanceAttribute(IComponent component)
+    {
+        throw new NotImplementedException();
+    }
+}
+public class LogisticsAdapterB : IIternalDeliveryService
+{
+    private readonly ExternalLogisticsServiceB _externalServiceB = new ExternalLogisticsServiceB();
+
+    public void DeliverOrder(string orderId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void DeliveryOrder(string orderId)
+    {
+        _externalServiceB.sendPackage(orderId);
+    }
+    public string GetDeliveryStatus(string orderId)
+    {
+        return _externalServiceB.CheckPackagestatus(orderId);
+    }
+}
+
 
