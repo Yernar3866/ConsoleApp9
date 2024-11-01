@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ﻿using System;
  public interface IReport
 {
@@ -25,6 +25,22 @@ public abstract class ReportDecorator : IReport
         return _report.Generate();
     }
 }
-=======
-﻿
->>>>>>> 220fc327a47931ed0c0b81b38d9ed5c6bd0ef0cf
+public class DateFilterDecorator : ReportDecorator
+{
+    private readonly DateTime _startDate;
+    private readonly DateTime _endDate;
+
+    public DateFilterDecorator(DateTime startDate, DateTime endDate): base(report)
+    {
+        _startDate = startDate;
+        _endDate = endDate;
+    }
+
+    public override string Generate()
+    {
+        return $@"{base.Generate()} filtered by date from
+{_startDate.ToShortDateString()} to {_endDate.ToShortDateString()}";
+    }
+
+}
+
