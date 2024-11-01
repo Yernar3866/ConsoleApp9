@@ -174,4 +174,42 @@ public class LogisticsAdapterB : IIternalDeliveryService
     }
 }
 
+public static class DeliveryServicFactory
+{
+    public static IInternalDeliveryService GetDeliveryService(string type)
+    {
+        switch(type)
+        {
+            case "Internal":
+                return new InternalDeliveryService();
+            case "ServiceA":
+                return new LogisticsAdapterA();
+            case "ServiceB":
+                return new LogisticsAdapterB();
+            default:
+                throw new ArgumentException("Invalid service type");
 
+        }
+    }
+}
+public static class LogisticsClient
+{
+    public static void ProcessDelivery()
+    {
+        IInternalDeliveryService deliveryService = new DeliveryServicFactory.GetDeliveryService("ServiceA");
+        deliveryService.DeliverOrder("123");
+        Console.WriteLine(deliveryService.DeliveryStatus("123"));
+    }
+}
+// Vhod
+public class program
+{
+    public static void Main()
+    {
+        Console.WriteLine("----- Сиситема отчетности ----");
+        ReportClient.GenerateReport();
+
+        Console.WriteLine("------Система логистики -----");
+        LogisticsClient.ProcessDelivery();
+    }
+}
